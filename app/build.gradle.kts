@@ -33,6 +33,9 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    buildFeatures{
+        viewBinding=true
+    }
 }
 
 dependencies {
@@ -51,6 +54,8 @@ dependencies {
     //Gson
     implementation ("com.google.code.gson:gson:2.10.1")
 
+    //Fragment
+    implementation("androidx.fragment:fragment-ktx:1.6.2")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
