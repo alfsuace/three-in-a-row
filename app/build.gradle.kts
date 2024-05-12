@@ -48,6 +48,8 @@ dependencies {
 
     // Livecycle
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
+    implementation("androidx.lifecycle.ViewModel:2.7.0")
+
 
     // Coroutines
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
