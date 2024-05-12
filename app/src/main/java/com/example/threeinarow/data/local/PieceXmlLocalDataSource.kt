@@ -26,9 +26,10 @@ class PieceXmlLocalDataSource(
         val pieces = getPieces().toMutableList()
         pieces.add(piece)
         pieces.forEach() {
-            sharedPreferences.edit().apply() {
+            sharedPreferences.edit() {
                 putString(it.id, serializer.toJson(it))
-            }.apply()
+                apply()
+            }
         }
     }
 
