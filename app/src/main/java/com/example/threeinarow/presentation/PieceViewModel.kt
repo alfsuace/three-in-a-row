@@ -2,12 +2,14 @@ package com.example.threeinarow.presentation
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.threeinarow.domain.GetPiecesUseCase
 import com.example.threeinarow.domain.Piece
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class PieceViewModel(private val getPiecesUseCase: GetPiecesUseCase) {
+class PieceViewModel(private val getPiecesUseCase: GetPiecesUseCase) : ViewModel() {
 
     private val _uiState = MutableLiveData<UiState>()
     val uiState: LiveData<UiState> = _uiState
