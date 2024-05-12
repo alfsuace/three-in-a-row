@@ -27,7 +27,7 @@ class PieceXmlLocalDataSource(
         pieces.add(piece)
         pieces.forEach() {
             sharedPreferences.edit().apply() {
-                putString("board", serializer.toJson(it))
+                putString(it.id, serializer.toJson(it))
             }.apply()
         }
     }
