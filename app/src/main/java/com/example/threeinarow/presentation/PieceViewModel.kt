@@ -6,10 +6,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.threeinarow.domain.GetPiecesUseCase
 import com.example.threeinarow.domain.Piece
+import com.example.threeinarow.domain.SetPieceUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class PieceViewModel(private val getPiecesUseCase: GetPiecesUseCase) : ViewModel() {
+class PieceViewModel(
+    private val getPiecesUseCase: GetPiecesUseCase,
+    private val setPieceUseCase: SetPieceUseCase
+
+) : ViewModel() {
 
     private val _uiState = MutableLiveData<UiState>()
     val uiState: LiveData<UiState> = _uiState
@@ -22,6 +27,11 @@ class PieceViewModel(private val getPiecesUseCase: GetPiecesUseCase) : ViewModel
         }
     }
 
+    fun savePieces(piece: Piece) {
+        viewModelScope.launch() {
+            setPieceUseCase.invoke(piece)
+        }
+    }
 
     data class UiState(
         val pieces: List<Piece> = emptyList()

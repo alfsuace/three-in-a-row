@@ -18,7 +18,7 @@ class PieceItemViewHolder(val view: View): RecyclerView.ViewHolder(view) {
                 "black" -> Color.BLACK
                 else -> Color.TRANSPARENT
             }
-            root.setBackgroundColor(color)
+
         }
     }
 
