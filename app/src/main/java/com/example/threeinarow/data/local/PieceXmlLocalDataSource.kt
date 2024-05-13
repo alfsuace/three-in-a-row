@@ -12,14 +12,11 @@ class PieceXmlLocalDataSource(
     private val sharedPreferences = context.getSharedPreferences("game.txt", Context.MODE_PRIVATE)
 
     fun getPieces(): List<Piece> {
-        val pieces = mutableListOf<Piece>()
-        sharedPreferences.all.values.forEach { serializedPiece ->
-            if (serializedPiece is String) {
-                val piece = serializer.fromJson(serializedPiece, Piece::class.java)
-                pieces.add(piece)
-            }
+        val list = mutableListOf<Piece>()
+        sharedPreferences.all.values.forEach {
+            list.add(serializer.fromJson(it.toString(), Piece::class.java))
         }
-        return pieces
+        return list.toList()
     }
 
     fun savePiece(piece: Piece) {
