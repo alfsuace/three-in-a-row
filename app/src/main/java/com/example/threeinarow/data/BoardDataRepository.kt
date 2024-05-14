@@ -7,7 +7,7 @@ import com.example.threeinarow.domain.Piece
 class BoardDataRepository(
     private val boardXmlLocalDataSource: BoardXmlLocalDataSource
 ) : BoardRepository {
-    override suspend fun obtainBoard(): List<Piece> {
+    override suspend fun getBoard(): List<Piece> {
         val pieces = boardXmlLocalDataSource.getPieces()
         if (pieces.isEmpty()) {
             return createBoard()
