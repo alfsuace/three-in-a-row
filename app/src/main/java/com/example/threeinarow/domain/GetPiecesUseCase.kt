@@ -1,8 +1,8 @@
 package com.example.threeinarow.domain
 
-class GetPiecesUseCase(private val pieceRepository: PieceRepository) {
+class GetPiecesUseCase(private val boardRepository: BoardRepository) {
 
     suspend operator fun invoke(): List<Piece> {
-        return pieceRepository.obtainBoard()
+        return boardRepository.obtainBoard()
     }
 }

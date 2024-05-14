@@ -1,7 +1,7 @@
 package com.example.threeinarow.domain
 
-class SetPieceUseCase(private val pieceRepository: PieceRepository) {
+class SetPieceUseCase(private val boardRepository: BoardRepository) {
     operator fun invoke(piece: Piece) {
-        pieceRepository.saveBoard(piece)
+        boardRepository.saveBoard(piece)
     }
 }

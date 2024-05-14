@@ -5,7 +5,7 @@ import androidx.core.content.edit
 import com.example.threeinarow.domain.Piece
 import com.google.gson.Gson
 
-class PieceXmlLocalDataSource(
+class BoardXmlLocalDataSource(
     private val context: Context
 ) {
     private val serializer = Gson()
@@ -13,8 +13,11 @@ class PieceXmlLocalDataSource(
 
     fun getPieces(): List<Piece> {
         val list = mutableListOf<Piece>()
-        sharedPreferences.all.values.forEach {
-            list.add(serializer.fromJson(it.toString(), Piece::class.java))
+        sharedPreferences.all.values.forEach { value ->
+            val piece = value as? Piece
+            if (piece != null) {
+                list.add(piece)
+            }
         }
         return list.toList()
     }
@@ -34,6 +37,22 @@ class PieceXmlLocalDataSource(
         sharedPreferences.edit() {
             clear()
             apply()
+        }
+    }
+
+    fun getTurn(): String {
+        return sharedPreferences.getString("turn", "")!!
+    }
+
+    fun changeTurn() {
+        var player = getTurn()
+        if (player == "white") {
+            player = "black"
+        } else {
+            player = "white"
+        }
+        sharedPreferences.edit() {
+            putString("turn", player)
         }
     }
 

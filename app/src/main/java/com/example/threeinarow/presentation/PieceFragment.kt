@@ -7,11 +7,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.threeinarow.data.PieceDataRepository
-import com.example.threeinarow.data.local.PieceXmlLocalDataSource
+import com.example.threeinarow.data.BoardDataRepository
+import com.example.threeinarow.data.local.BoardXmlLocalDataSource
 import com.example.threeinarow.databinding.FragmentBoardBinding
+import com.example.threeinarow.domain.ChangeTurnUseCase
 import com.example.threeinarow.domain.GetPiecesUseCase
+import com.example.threeinarow.domain.GetTurnUseCase
 import com.example.threeinarow.domain.SetPieceUseCase
 import com.example.threeinarow.presentation.adapter.PieceItemAdapter
 
@@ -19,17 +20,23 @@ class PieceFragment : Fragment() {
 
     private var _binding: FragmentBoardBinding? = null
     private val binding get() = _binding!!
-    private val resourceAdapter = PieceItemAdapter()
+    private val pieceAdapter = PieceItemAdapter()
 
 
     private val viewModel: PieceViewModel by lazy {
-        val dataRepo = PieceDataRepository(PieceXmlLocalDataSource(requireContext()))
+        val dataRepo = BoardDataRepository(BoardXmlLocalDataSource(requireContext()))
 
         PieceViewModel(
             GetPiecesUseCase(
                 dataRepo
             ),
             SetPieceUseCase(
+                dataRepo
+            ),
+            GetTurnUseCase(
+                dataRepo
+            ),
+            ChangeTurnUseCase(
                 dataRepo
             )
         )
@@ -48,14 +55,19 @@ class PieceFragment : Fragment() {
     private fun setupview() {
         binding.apply {
             pieceList.apply {
-                adapter = resourceAdapter
                 layoutManager = GridLayoutManager(
                     requireContext(),
                     3,
-                    LinearLayoutManager.VERTICAL,
+                    GridLayoutManager.VERTICAL,
                     false
                 )
-
+                pieceAdapter.setEvent {
+                    viewModel.loadTurn()
+                    val piece = it.copy(colour = viewModel.uiState.value?.turn!!)
+                    viewModel.setPiece(piece)
+                    viewModel.changeTurn()
+                }
+                adapter = pieceAdapter
             }
         }
     }
@@ -64,11 +76,12 @@ class PieceFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupObservers()
         viewModel.loadPieces()
+        viewModel.loadTurn()
     }
 
     private fun setupObservers() {
         val observer = Observer<PieceViewModel.UiState> { uiState ->
-            resourceAdapter.submitList(uiState.pieces)
+            pieceAdapter.submitList(uiState.pieces)
         }
         viewModel.uiState.observe(viewLifecycleOwner, observer)
     }
