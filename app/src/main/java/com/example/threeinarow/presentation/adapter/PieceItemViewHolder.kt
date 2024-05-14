@@ -19,7 +19,7 @@ class PieceItemViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
             } else {
                 viewPiece.setImageResource(R.drawable.ic_square)
             }
-            view.setOnClickListener {
+            root.setOnClickListener {
                 onClick.invoke(piece!!)
             }
         }
