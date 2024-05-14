@@ -42,11 +42,11 @@ class BoardDataRepository(
         val example2 = Piece("1", 0, 1, "white")
         val example3 = Piece("2", 0, 2, "empty")
         val example4 = Piece("3", 1, 0, "empty")
-        val example5 = Piece("4", 1, 0, "empty")
-        val example6 = Piece("5", 1, 0, "empty")
-        val example7 = Piece("6", 1, 0, "empty")
-        val example8 = Piece("7", 1, 0, "empty")
-        val example9 = Piece("8", 1, 0, "empty")
+        val example5 = Piece("4", 1, 1, "empty")
+        val example6 = Piece("5", 1, 2, "empty")
+        val example7 = Piece("6", 2, 0, "empty")
+        val example8 = Piece("7", 2, 1, "empty")
+        val example9 = Piece("8", 2, 2, "empty")
         val list: List<Piece> = mutableListOf(
             example1,
             example2,
