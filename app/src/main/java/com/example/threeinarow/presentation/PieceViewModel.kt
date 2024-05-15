@@ -20,14 +20,33 @@ class PieceViewModel(
 
 ) : ViewModel() {
 
-    private val _uiState = MutableLiveData<UiState>()
+    var currenUiState = UiState()
+    private var _uiState = MutableLiveData(currenUiState)
     val uiState: LiveData<UiState> = _uiState
+
+    fun putPiece(piece: Piece){
+        _uiState.postValue(currenUiState)
+        viewModelScope.launch(Dispatchers.IO) {
+            val auxPiece = piece.copy(colour = currenUiState.turn)
+            setPieceUseCase(auxPiece)
+            changeTurnUseCase.invoke()
+            val piecinas = getPiecesUseCase.invoke()
+            val turnsito = getTurnUseCase.invoke()
+            _uiState.postValue(
+                UiState(
+                    pieces = piecinas,
+                    turn = turnsito
+            ))
+        }
+    }
 
     fun loadPieces() {
         _uiState.postValue(UiState(pieces = emptyList()))
         viewModelScope.launch(Dispatchers.IO) {
             val response = getPiecesUseCase.invoke()
-            _uiState.postValue(UiState(pieces = response))
+            currenUiState =
+                currenUiState.copy(pieces = response)
+            _uiState.postValue(currenUiState)
         }
     }
 
@@ -35,21 +54,23 @@ class PieceViewModel(
         _uiState.postValue((UiState(turn = "")))
         viewModelScope.launch(Dispatchers.IO) {
             val response = getTurnUseCase.invoke()
-            _uiState.postValue(UiState(turn = response))
+            currenUiState =
+                currenUiState.copy(turn = response)
+            _uiState.postValue(currenUiState)
         }
     }
 
     fun changeTurn() {
         viewModelScope.launch(Dispatchers.IO) {
             changeTurnUseCase.invoke()
-            _uiState.postValue(UiState())
+            _uiState.postValue(currenUiState)
         }
     }
 
     fun setPiece(piece: Piece) {
         viewModelScope.launch() {
             setPieceUseCase.invoke(piece)
-            _uiState.postValue(UiState())
+            _uiState.postValue(currenUiState)
         }
     }
 

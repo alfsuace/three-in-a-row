@@ -58,15 +58,9 @@ class BoardDataRepository(
             example8,
             example9
         )
-        saveBoard(list[0])
-        saveBoard(list[1])
-        saveBoard(list[2])
-        saveBoard(list[3])
-        saveBoard(list[4])
-        saveBoard(list[5])
-        saveBoard(list[6])
-        saveBoard(list[7])
-        saveBoard(list[8])
+        list.forEach(){
+            saveBoard(it)
+        }
         return list
     }
 

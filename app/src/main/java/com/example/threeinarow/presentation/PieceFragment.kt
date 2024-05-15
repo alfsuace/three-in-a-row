@@ -62,10 +62,7 @@ class PieceFragment : Fragment() {
                     false
                 )
                 pieceAdapter.setEvent {
-                    val piece = it.copy(colour = viewModel.uiState.value?.turn!!)
-                    viewModel.setPiece(piece)
-                    viewModel.changeTurn()
-                    viewModel.loadTurn()
+                    viewModel.putPiece(it)
                 }
                 adapter = pieceAdapter
             }
