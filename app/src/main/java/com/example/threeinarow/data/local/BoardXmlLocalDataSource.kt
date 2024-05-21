@@ -14,22 +14,20 @@ class BoardXmlLocalDataSource(
     fun getPieces(): List<Piece> {
         val list = mutableListOf<Piece>()
         sharedPreferences.all.values.forEach { value ->
-            val piece = value as? Piece
-            if (piece != null) {
-                list.add(piece)
+            try {
+                list.add(serializer.fromJson(value.toString(), Piece::class.java))
+            } catch (ex: Exception) {
+
             }
         }
         return list.toList()
     }
 
+
     fun savePiece(piece: Piece) {
-        val pieces = getPieces().toMutableList()
-        pieces.add(piece)
-        pieces.forEach() {
-            sharedPreferences.edit() {
-                putString(it.id, serializer.toJson(it))
-                apply()
-            }
+        sharedPreferences.edit() {
+            putString(piece.id, serializer.toJson(piece))
+            apply()
         }
     }
 
