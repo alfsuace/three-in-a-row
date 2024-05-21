@@ -7,8 +7,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.threeinarow.domain.ChangeTurnUseCase
 import com.example.threeinarow.domain.GetPiecesUseCase
 import com.example.threeinarow.domain.GetTurnUseCase
+import com.example.threeinarow.domain.GetWinnerUseCase
 import com.example.threeinarow.domain.Piece
 import com.example.threeinarow.domain.SetPieceUseCase
+import com.example.threeinarow.domain.WipeBoardUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -16,7 +18,9 @@ class PieceViewModel(
     private val getPiecesUseCase: GetPiecesUseCase,
     private val setPieceUseCase: SetPieceUseCase,
     private val getTurnUseCase: GetTurnUseCase,
-    private val changeTurnUseCase: ChangeTurnUseCase
+    private val changeTurnUseCase: ChangeTurnUseCase,
+    private val wipeBoardUseCase: WipeBoardUseCase,
+    private val getWinnerUseCase: GetWinnerUseCase
 
 ) : ViewModel() {
 
@@ -24,7 +28,7 @@ class PieceViewModel(
     private var _uiState = MutableLiveData(currenUiState)
     val uiState: LiveData<UiState> = _uiState
 
-    fun putPiece(piece: Piece){
+    fun putPiece(piece: Piece) {
         _uiState.postValue(currenUiState)
         viewModelScope.launch(Dispatchers.IO) {
             val auxPiece = piece.copy(colour = currenUiState.turn)
@@ -32,11 +36,13 @@ class PieceViewModel(
             changeTurnUseCase.invoke()
             val piecinas = getPiecesUseCase.invoke()
             val turnsito = getTurnUseCase.invoke()
-            _uiState.postValue(
-                UiState(
-                    pieces = piecinas,
-                    turn = turnsito
-            ))
+            val win = getWinnerUseCase.invoke()
+            currenUiState = currenUiState.copy(
+                pieces = piecinas,
+                turn = turnsito,
+                winner = win
+            )
+            _uiState.postValue(currenUiState)
         }
     }
 
@@ -60,22 +66,23 @@ class PieceViewModel(
         }
     }
 
-    fun changeTurn() {
+    fun wipeBoard() {
+        _uiState.postValue(currenUiState)
         viewModelScope.launch(Dispatchers.IO) {
-            changeTurnUseCase.invoke()
-            _uiState.postValue(currenUiState)
+            wipeBoardUseCase.invoke()
+            val piecinas = getPiecesUseCase.invoke()
+            val turnsito = getTurnUseCase.invoke()
+            _uiState.postValue(
+                UiState(
+                    pieces = piecinas,
+                    turn = turnsito
+                )
+            )
         }
     }
-
-    fun setPiece(piece: Piece) {
-        viewModelScope.launch() {
-            setPieceUseCase.invoke(piece)
-            _uiState.postValue(currenUiState)
-        }
-    }
-
     data class UiState(
         val pieces: List<Piece> = emptyList(),
-        val turn: String = ""
+        val turn: String = "",
+        val winner: String = ""
     )
 }

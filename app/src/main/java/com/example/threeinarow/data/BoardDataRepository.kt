@@ -25,12 +25,7 @@ class BoardDataRepository(
     }
 
     override fun getTurn(): String {
-        val turn = boardXmlLocalDataSource.getTurn()
-        return if (turn == "") {
-            "white"
-        } else {
-            "black"
-        }
+        return boardXmlLocalDataSource.getTurn()
     }
 
     override fun changeTurn() {
@@ -39,7 +34,7 @@ class BoardDataRepository(
 
     private fun createBoard(): List<Piece> {
         val example1 = Piece("0", 0, 0, "empty")
-        val example2 = Piece("1", 0, 1, "white")
+        val example2 = Piece("1", 0, 1, "empty")
         val example3 = Piece("2", 0, 2, "empty")
         val example4 = Piece("3", 1, 0, "empty")
         val example5 = Piece("4", 1, 1, "empty")

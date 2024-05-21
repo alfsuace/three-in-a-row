@@ -13,7 +13,9 @@ import com.example.threeinarow.databinding.FragmentBoardBinding
 import com.example.threeinarow.domain.ChangeTurnUseCase
 import com.example.threeinarow.domain.GetPiecesUseCase
 import com.example.threeinarow.domain.GetTurnUseCase
+import com.example.threeinarow.domain.GetWinnerUseCase
 import com.example.threeinarow.domain.SetPieceUseCase
+import com.example.threeinarow.domain.WipeBoardUseCase
 import com.example.threeinarow.presentation.adapter.PieceItemAdapter
 
 class PieceFragment : Fragment() {
@@ -37,6 +39,12 @@ class PieceFragment : Fragment() {
                 dataRepo
             ),
             ChangeTurnUseCase(
+                dataRepo
+            ),
+            WipeBoardUseCase(
+                dataRepo
+            ),
+            GetWinnerUseCase(
                 dataRepo
             )
         )
@@ -62,7 +70,9 @@ class PieceFragment : Fragment() {
                     false
                 )
                 pieceAdapter.setEvent {
-                    viewModel.putPiece(it)
+                    if (it.colour == "empty") {
+                        viewModel.putPiece(it)
+                    }
                 }
                 adapter = pieceAdapter
             }
@@ -72,13 +82,21 @@ class PieceFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupObservers()
+        viewModel.wipeBoard()
         viewModel.loadPieces()
         viewModel.loadTurn()
+
     }
 
     private fun setupObservers() {
         val observer = Observer<PieceViewModel.UiState> { uiState ->
             pieceAdapter.submitList(uiState.pieces)
+            if (uiState.winner == "" || uiState.winner == "empty") {
+                binding.winnerText.visibility = View.GONE
+            } else {
+                binding.winnerText.visibility = View.VISIBLE
+                binding.winnerText.text = uiState.winner
+            }
         }
         viewModel.uiState.observe(viewLifecycleOwner, observer)
     }

@@ -39,14 +39,14 @@ class BoardXmlLocalDataSource(
     }
 
     fun getTurn(): String {
-        return sharedPreferences.getString("turn", "")!!
+        return sharedPreferences.getString("turn", "white")!!
     }
 
     fun changeTurn() {
         var player = getTurn()
         if (player == "white") {
             player = "black"
-        } else {
+        } else if (player == "black") {
             player = "white"
         }
         sharedPreferences.edit() {

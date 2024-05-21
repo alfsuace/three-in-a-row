@@ -25,6 +25,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:listitem="@layout/view_piece_item" />
+
+        <TextView
+            android:id="@+id/winner_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="winner"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="@id/piece_list"
+            app:layout_constraintTop_toBottomOf="@id/piece_list"
+            app:layout_goneMarginTop="@dimen/spacing20" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
