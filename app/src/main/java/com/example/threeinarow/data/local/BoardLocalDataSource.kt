@@ -5,7 +5,11 @@ import com.example.threeinarow.domain.Piece
 class BoardLocalDataSource(private val pieceDao: PieceDao, private val turnDao: TurnDao) {
 
     fun getPieces(): List<Piece> {
-        return pieceDao.getPieces().map { it.toDomain() }
+        return try {
+            pieceDao.getPieces().map { it.toDomain() }
+        } catch (ex: Exception) {
+            emptyList()
+        }
     }
 
     fun savePiece(piece: Piece) {
@@ -17,7 +21,12 @@ class BoardLocalDataSource(private val pieceDao: PieceDao, private val turnDao: 
     }
 
     fun getTurn(): String {
-        return turnDao.getTurn().toDomain()
+        return try {
+            val turn = turnDao.getTurn()
+            turn.toDomain()
+        } catch (ex: Exception) {
+            "white"
+        }
     }
 
     fun changeTurn() {

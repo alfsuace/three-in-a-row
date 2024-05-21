@@ -8,7 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.threeinarow.data.BoardDataRepository
-import com.example.threeinarow.data.local.BoardXmlLocalDataSource
+import com.example.threeinarow.data.local.BoardDataBase
+import com.example.threeinarow.data.local.BoardLocalDataSource
 import com.example.threeinarow.databinding.FragmentBoardBinding
 import com.example.threeinarow.domain.ChangeTurnUseCase
 import com.example.threeinarow.domain.GetPiecesUseCase
@@ -26,7 +27,12 @@ class PieceFragment : Fragment() {
 
 
     private val viewModel: PieceViewModel by lazy {
-        val dataRepo = BoardDataRepository(BoardXmlLocalDataSource(requireContext()))
+        val dataRepo = BoardDataRepository(
+            BoardLocalDataSource(
+                BoardDataBase.getInstance(requireContext()).pieceDao(),
+                BoardDataBase.getInstance(requireContext()).turnDao()
+            )
+        )
 
         PieceViewModel(
             GetPiecesUseCase(
@@ -85,7 +91,6 @@ class PieceFragment : Fragment() {
         viewModel.wipeBoard()
         viewModel.loadPieces()
         viewModel.loadTurn()
-
     }
 
     private fun setupObservers() {
