@@ -1,14 +1,14 @@
 package com.example.threeinarow.data
 
-import com.example.threeinarow.data.local.BoardXmlLocalDataSource
+import com.example.threeinarow.data.local.BoardLocalDataSource
 import com.example.threeinarow.domain.BoardRepository
 import com.example.threeinarow.domain.Piece
 
 class BoardDataRepository(
-    private val boardXmlLocalDataSource: BoardXmlLocalDataSource
+    private val boardLocalDataSource: BoardLocalDataSource
 ) : BoardRepository {
     override suspend fun getBoard(): List<Piece> {
-        val pieces = boardXmlLocalDataSource.getPieces()
+        val pieces = boardLocalDataSource.getPieces()
         if (pieces.isEmpty()) {
             return createBoard()
         } else {
@@ -17,19 +17,19 @@ class BoardDataRepository(
     }
 
     override fun saveBoard(piece: Piece) {
-        boardXmlLocalDataSource.savePiece(piece)
+        boardLocalDataSource.savePiece(piece)
     }
 
     override fun clearBoard() {
-        boardXmlLocalDataSource.clearBoard()
+        boardLocalDataSource.clearBoard()
     }
 
     override fun getTurn(): String {
-        return boardXmlLocalDataSource.getTurn()
+        return boardLocalDataSource.getTurn()
     }
 
     override fun changeTurn() {
-        boardXmlLocalDataSource.changeTurn()
+        boardLocalDataSource.changeTurn()
     }
 
     private fun createBoard(): List<Piece> {
