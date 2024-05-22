@@ -5,10 +5,10 @@ import com.example.threeinarow.domain.Piece
 
 fun PieceRemoteModel.toModel(): Piece {
     return Piece(
-        this.id,
-        this.horizontal,
-        this.vertical,
-        this.colour
+        this.id!!,
+        this.horizontal!!,
+        this.vertical!!,
+        this.colour!!
     )
 }
 
