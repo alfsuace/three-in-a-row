@@ -51,6 +51,7 @@ class BoardXmlLocalDataSource(
         }
         sharedPreferences.edit() {
             putString("turn", player)
+            apply()
         }
     }
 
