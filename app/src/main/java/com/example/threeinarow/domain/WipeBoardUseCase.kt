@@ -2,7 +2,7 @@ package com.example.threeinarow.domain
 
 class WipeBoardUseCase(private val boardRepository: BoardRepository) {
 
-    operator fun invoke() {
+    suspend operator fun invoke() {
         boardRepository.clearBoard()
     }
 }

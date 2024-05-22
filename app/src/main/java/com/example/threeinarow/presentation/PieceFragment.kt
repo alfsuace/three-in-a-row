@@ -8,8 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.threeinarow.data.BoardDataRepository
-import com.example.threeinarow.data.local.BoardDataBase
-import com.example.threeinarow.data.local.BoardLocalDataSource
+import com.example.threeinarow.data.remote.BoardDbRemoteDataSource
 import com.example.threeinarow.databinding.FragmentBoardBinding
 import com.example.threeinarow.domain.ChangeTurnUseCase
 import com.example.threeinarow.domain.GetPiecesUseCase
@@ -18,6 +17,7 @@ import com.example.threeinarow.domain.GetWinnerUseCase
 import com.example.threeinarow.domain.SetPieceUseCase
 import com.example.threeinarow.domain.WipeBoardUseCase
 import com.example.threeinarow.presentation.adapter.PieceItemAdapter
+import com.google.firebase.database.FirebaseDatabase
 
 class PieceFragment : Fragment() {
 
@@ -28,9 +28,8 @@ class PieceFragment : Fragment() {
 
     private val viewModel: PieceViewModel by lazy {
         val dataRepo = BoardDataRepository(
-            BoardLocalDataSource(
-                BoardDataBase.getInstance(requireContext()).pieceDao(),
-                BoardDataBase.getInstance(requireContext()).turnDao()
+            BoardDbRemoteDataSource(
+                FirebaseDatabase.getInstance()
             )
         )
 

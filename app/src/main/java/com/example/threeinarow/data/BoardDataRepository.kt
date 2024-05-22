@@ -1,38 +1,38 @@
 package com.example.threeinarow.data
 
-import com.example.threeinarow.data.local.BoardLocalDataSource
+import com.example.threeinarow.data.remote.BoardDbRemoteDataSource
 import com.example.threeinarow.domain.BoardRepository
 import com.example.threeinarow.domain.Piece
 
 class BoardDataRepository(
-    private val boardLocalDataSource: BoardLocalDataSource
+    private val boardRemoteDataSource: BoardDbRemoteDataSource
 ) : BoardRepository {
     override suspend fun getBoard(): List<Piece> {
-        val pieces = boardLocalDataSource.getPieces()
-        if (pieces.isEmpty()) {
+        val pieces = boardRemoteDataSource.getPieces()
+        if (pieces.size < 7) {
             return createBoard()
         } else {
             return pieces
         }
     }
 
-    override fun saveBoard(piece: Piece) {
-        boardLocalDataSource.savePiece(piece)
+    override suspend fun saveBoard(piece: Piece) {
+        boardRemoteDataSource.savePiece(piece)
     }
 
-    override fun clearBoard() {
-        boardLocalDataSource.clearBoard()
+    override suspend fun clearBoard() {
+        boardRemoteDataSource.clearBoard()
     }
 
-    override fun getTurn(): String {
-        return boardLocalDataSource.getTurn()
+    override suspend fun getTurn(): String {
+        return boardRemoteDataSource.getTurn()
     }
 
-    override fun changeTurn() {
-        boardLocalDataSource.changeTurn()
+    override suspend fun changeTurn() {
+        boardRemoteDataSource.changeTurn()
     }
 
-    private fun createBoard(): List<Piece> {
+    private suspend fun createBoard(): List<Piece> {
         val example1 = Piece("0", 0, 0, "empty")
         val example2 = Piece("1", 0, 1, "empty")
         val example3 = Piece("2", 0, 2, "empty")
