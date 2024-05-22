@@ -2,6 +2,7 @@ package com.example.threeinarow.data.remote
 
 import com.example.threeinarow.domain.Piece
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.getValue
 import kotlinx.coroutines.tasks.await
 
 class BoardDbRemoteDataSource(private val firebase: FirebaseDatabase) {
@@ -22,9 +23,7 @@ class BoardDbRemoteDataSource(private val firebase: FirebaseDatabase) {
     }
 
     suspend fun getTurn(): String {
-        val response = firebase.getReference("turn").get().await().children.map {
-            it.getValue(TurnRemoteModel::class.java)!!.turn
-        }.first()
+        val response = firebase.getReference("turn").get().await().getValue(TurnRemoteModel::class.java)!!.toModel()
         if (response != "") {
             return response
         } else {
