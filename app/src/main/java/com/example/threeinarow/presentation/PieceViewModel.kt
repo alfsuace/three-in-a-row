@@ -4,14 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.threeinarow.domain.ChangeTurnUseCase
-import com.example.threeinarow.domain.GetPiecesUseCase
-import com.example.threeinarow.domain.GetTurnUseCase
-import com.example.threeinarow.domain.GetWinnerUseCase
-import com.example.threeinarow.domain.Piece
-import com.example.threeinarow.domain.SetPieceUseCase
-import com.example.threeinarow.domain.WipeBoardUseCase
+import com.example.threeinarow.domain.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class PieceViewModel(
@@ -21,65 +16,65 @@ class PieceViewModel(
     private val changeTurnUseCase: ChangeTurnUseCase,
     private val wipeBoardUseCase: WipeBoardUseCase,
     private val getWinnerUseCase: GetWinnerUseCase
-
 ) : ViewModel() {
 
-    var currenUiState = UiState()
-    private var _uiState = MutableLiveData(currenUiState)
+    private var currenUiState = UiState()
+    private val _uiState = MutableLiveData(currenUiState)
     val uiState: LiveData<UiState> = _uiState
 
     fun putPiece(piece: Piece) {
-        _uiState.postValue(currenUiState)
         viewModelScope.launch(Dispatchers.IO) {
             val auxPiece = piece.copy(colour = currenUiState.turn)
             setPieceUseCase(auxPiece)
-            changeTurnUseCase.invoke()
-            val piecinas = getPiecesUseCase.invoke()
-            val turnsito = getTurnUseCase.invoke()
-            val win = getWinnerUseCase.invoke()
-            currenUiState = currenUiState.copy(
-                pieces = piecinas,
-                turn = turnsito,
-                winner = win
-            )
+            updateState()
+        }
+    }
+
+    fun changeTurn() {
+        viewModelScope.launch(Dispatchers.IO) {
+            changeTurnUseCase()
+        }
+    }
+
+    private fun updateState() {
+        viewModelScope.launch(Dispatchers.IO) {
+            async { changeTurn() }
+            val piecesToWait = async { getPiecesUseCase() }
+            val turnToWait = async { getTurnUseCase() }
+            val winnerToWait = async { getWinnerUseCase() }
+
+            val pieces = piecesToWait.await()
+            val turn = turnToWait.await()
+            val winner = winnerToWait.await()
+
+            currenUiState = UiState(pieces = pieces, turn = turn, winner = winner)
             _uiState.postValue(currenUiState)
         }
     }
 
     fun loadPieces() {
-        _uiState.postValue(UiState(pieces = emptyList()))
         viewModelScope.launch(Dispatchers.IO) {
-            val response = getPiecesUseCase.invoke()
-            currenUiState =
-                currenUiState.copy(pieces = response)
+            val pieces = getPiecesUseCase()
+            currenUiState = currenUiState.copy(pieces = pieces)
             _uiState.postValue(currenUiState)
         }
     }
 
     fun loadTurn() {
-        _uiState.postValue((UiState(turn = "")))
         viewModelScope.launch(Dispatchers.IO) {
-            val response = getTurnUseCase.invoke()
-            currenUiState =
-                currenUiState.copy(turn = response)
+            val turn = getTurnUseCase()
+            currenUiState = currenUiState.copy(turn = turn)
             _uiState.postValue(currenUiState)
         }
     }
 
     fun wipeBoard() {
-        _uiState.postValue(currenUiState)
         viewModelScope.launch(Dispatchers.IO) {
-            wipeBoardUseCase.invoke()
-            val piecinas = getPiecesUseCase.invoke()
-            val turnsito = getTurnUseCase.invoke()
-            _uiState.postValue(
-                UiState(
-                    pieces = piecinas,
-                    turn = turnsito
-                )
-            )
+            wipeBoardUseCase()
+            updateState()
         }
     }
+
     data class UiState(
         val pieces: List<Piece> = emptyList(),
         val turn: String = "",
