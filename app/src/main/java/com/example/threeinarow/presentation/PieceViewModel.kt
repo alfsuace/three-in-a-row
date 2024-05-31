@@ -30,25 +30,18 @@ class PieceViewModel(
         }
     }
 
-    fun changeTurn() {
-        viewModelScope.launch(Dispatchers.IO) {
-            changeTurnUseCase()
-        }
-    }
 
     private fun updateState() {
         viewModelScope.launch(Dispatchers.IO) {
             async { changeTurn() }
-            val piecesToWait = async { getPiecesUseCase() }
-            val turnToWait = async { getTurnUseCase() }
-            val winnerToWait = async { getWinnerUseCase() }
-
-            val pieces = piecesToWait.await()
-            val turn = turnToWait.await()
-            val winner = winnerToWait.await()
-
-            currenUiState = UiState(pieces = pieces, turn = turn, winner = winner)
-            _uiState.postValue(currenUiState)
+            async { loadPieces() }
+            async { loadTurn() }
+            async { loadWinner() }
+        }
+    }
+    fun changeTurn() {
+        viewModelScope.launch(Dispatchers.IO) {
+            changeTurnUseCase()
         }
     }
 
@@ -68,6 +61,13 @@ class PieceViewModel(
         }
     }
 
+    fun loadWinner() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val winner = getWinnerUseCase()
+            currenUiState = currenUiState.copy(winner = winner)
+            _uiState.postValue(currenUiState)
+        }
+    }
     fun wipeBoard() {
         viewModelScope.launch(Dispatchers.IO) {
             wipeBoardUseCase()
